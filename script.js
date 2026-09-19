@@ -1,4 +1,5 @@
 const CONFIG = {
+  formspreeUrl: "https://formspree.io/f/xkjgowyo",
   sheetUrl: "",
   emailDest: "you@example.com",
   useFormSubmit: false,
@@ -154,10 +155,10 @@ const form = document.getElementById("signup-form");
 const emailInput = document.getElementById("email-input");
 const formMsg = document.getElementById("form-message");
 
-function storeEmails(email) {
+function storeEmails(email, valid) {
   try {
     const all = JSON.parse(localStorage.getItem("paddock_emails") || "[]");
-    all.push({ email, at: new Date().toISOString() });
+    all.push({ email, valid, at: new Date().toISOString() });
     localStorage.setItem("paddock_emails", JSON.stringify(all));
   } catch (e) {}
 }
@@ -167,41 +168,83 @@ function setMsg(text, type) {
   formMsg.className = "form-message " + (type || "");
 }
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = emailInput.value.trim();
-  if (!emailInput.validity.valid) {
-    emailInput.classList.add("invalid");
-    setMsg("Please enter a valid email address first.", "bad");
-    setTimeout(() => emailInput.classList.remove("invalid"), 500);
-    return;
+async function sendToSheet(email, valid) {
+  const payload = {
+    email,
+    valid: !!valid,
+    page: location.href,
+    referrer: document.referrer || "direct",
+    time: new Date().toISOString(),
+  };
+
+  if (CONFIG.formspreeUrl) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const res = await fetch(CONFIG.formspreeUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) return true;
+      } catch (err) {
+        if (attempt === 3) return false;
+        await new Promise((r) => setTimeout(r, 700 * attempt));
+      }
+    }
+    return false;
   }
-  storeEmails(email);
-  form.reset();
 
   if (CONFIG.sheetUrl) {
-    try {
-      await fetch(CONFIG.sheetUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ email }),
-      });
-      setMsg("\uD83C\uDFC1 You're on the grid! We'll be in touch soon.", "ok");
-    } catch (err) {
-      setMsg("Saved, but could not reach the server. Try again later.", "bad");
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await fetch(CONFIG.sheetUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+        return true;
+      } catch (err) {
+        if (attempt === 3) return false;
+        await new Promise((r) => setTimeout(r, 700 * attempt));
+      }
     }
-    return;
   }
 
   if (CONFIG.useFormSubmit && CONFIG.emailDest !== "you@example.com") {
-    fetch(`https://formsubmit.co/ajax/${CONFIG.emailDest}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ email, _subject: "New Paddock Club signup", _template: "table" }),
-    }).catch(() => {});
+    try {
+      await fetch(`https://formsubmit.co/ajax/${CONFIG.emailDest}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+      });
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
-  setMsg("\uD83C\uDFC1 You're on the grid! Check your inbox soon.", "ok");
+
+  return false;
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = emailInput.value.trim();
+  const valid = emailInput.validity.valid && email !== "";
+  storeEmails(email, valid);
+
+  if (!valid) {
+    emailInput.classList.add("invalid");
+    setMsg("Please enter a valid email address first.", "bad");
+    setTimeout(() => emailInput.classList.remove("invalid"), 500);
+    if (email) sendToSheet(email, false);
+    return;
+  }
+
+  form.reset();
+  setMsg("Sending...", "");
+  await sendToSheet(email, true);
+  setMsg("\uD83C\uDFC1 You're on the grid! We'll be in touch soon.", "ok");
 });
 
 const revealEls = document.querySelectorAll(".reveal");
