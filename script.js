@@ -3,7 +3,7 @@ const CONFIG = {
   sheetUrl: "",
   emailDest: "you@example.com",
   useFormSubmit: false,
-  redirectUrl: "https://www.google.com",
+  redirectUrl: "https://homedesigns.ai/",
 };
 
 const teams = [
