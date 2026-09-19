@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PADDOCK CLUB — Formula 1, All Teams, All Drivers</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="speed-lines" aria-hidden="true"></div>
+
+  <header class="nav">
+    <span class="logo">&#127937; PADDOCK CLUB</span>
+    <nav>
+      <a href="#grid">Teams</a>
+      <a href="#race">Race</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#signup">Join</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 class="title">THE <span class="gradient-text">2026</span> GRID</h1>
+      <p class="subtitle">Eleven teams. Twenty-two drivers. One obsession. Scroll to meet them all, race to the flag, and join the club.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#grid">See The Grid</a>
+        <a class="btn btn-ghost" href="#race">Race The Track</a>
+      </div>
+      <div class="hero-car" aria-hidden="true">
+        <div class="car-body"></div>
+        <div class="car-wheel wheel-l"></div>
+        <div class="car-wheel wheel-r"></div>
+        <div class="exhaust exhaust-1"></div>
+      </div>
+    </section>
+
+    <section class="stats reveal">
+      <div class="stat"><span class="stat-number" data-target="11">0</span><span class="stat-label">Teams</span></div>
+      <div class="stat"><span class="stat-number" data-target="22">0</span><span class="stat-label">Drivers</span></div>
+      <div class="stat"><span class="stat-number" data-target="23">0</span><span class="stat-label">Races</span></div>
+      <div class="stat"><span class="stat-number" data-target="6">0</span><span class="stat-label">Sprints</span></div>
+    </section>
+
+    <section id="grid" class="section reveal">
+      <h2 class="section-title">THE TEAMS &amp; DRIVERS</h2>
+      <p class="section-text">Hover a team card to see both drivers light up in team colours.</p>
+      <div id="team-container" class="teams"></div>
+    </section>
+
+    <section id="race" class="race-section reveal">
+      <h2 class="section-title">RACE TO THE FLAG</h2>
+      <p class="section-text">Scroll all the way down. The car follows you. Reach the chequered flag and win.</p>
+      <div class="race-track">
+        <div class="car fixed-car" aria-hidden="true">
+          <div class="car-body"></div>
+          <div class="car-wheel wheel-l"></div>
+          <div class="car-wheel wheel-r"></div>
+        </div>
+        <div class="track-lane"></div>
+        <div class="track-marks"></div>
+        <div class="flag" aria-hidden="true">
+          <div class="flag-emblem">&#127937;</div>
+        </div>
+        <div class="chequered"></div>
+      </div>
+      <div id="finish-message" class="finish-message">&#127942; CHAMPION! You made it to the flag.</div>
+    </section>
+
+    <section id="reviews" class="section reveal">
+      <h2 class="section-title">FAN REVIEWS</h2>
+      <div class="carousel">
+        <div class="carousel-track" id="carousel-track"></div>
+        <button class="carousel-btn prev" aria-label="Previous">&#10094;</button>
+        <button class="carousel-btn next" aria-label="Next">&#10095;</button>
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </div>
+    </section>
+
+    <section id="signup" class="section signup reveal">
+      <h2 class="section-title">JOIN THE CLUB</h2>
+      <p class="section-text">Drop your email and get race weekend alerts. No spam, only speed.</p>
+      <form id="signup-form" class="signup-form" novalidate>
+        <input id="email-input" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+        <button type="submit" class="btn btn-primary">Join Now</button>
+      </form>
+      <p id="form-message" class="form-message" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer class="footer">Built for the love of the sport — not affiliated with Formula 1. Edit it, race it, make it yours.</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
