@@ -3,7 +3,7 @@ const CONFIG = {
   sheetUrl: "",
   emailDest: "you@example.com",
   useFormSubmit: false,
-  redirectUrl: "https://formspree.io/thanks",
+  redirectUrl: "https://www.google.com",
 };
 
 const teams = [
