@@ -3,6 +3,7 @@ const CONFIG = {
   sheetUrl: "",
   emailDest: "you@example.com",
   useFormSubmit: false,
+  redirectUrl: "https://formspree.io/thanks",
 };
 
 const teams = [
@@ -242,9 +243,15 @@ form.addEventListener("submit", async (e) => {
   }
 
   form.reset();
-  setMsg("Sending...", "");
-  await sendToSheet(email, true);
-  setMsg("\uD83C\uDFC1 You're on the grid! We'll be in touch soon.", "ok");
+  setMsg("Redirecting...", "");
+  const ok = await sendToSheet(email, true);
+  if (!ok) {
+    setMsg("Something went wrong. Please try again.", "bad");
+    return;
+  }
+  setTimeout(() => {
+    window.location.href = CONFIG.redirectUrl;
+  }, 800);
 });
 
 const revealEls = document.querySelectorAll(".reveal");
